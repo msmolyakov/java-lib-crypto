@@ -1,1 +1,1 @@
-# java-lib-crypto
+# Waves Crypto for Java
