@@ -26,6 +26,16 @@ class TestBase58 {
     }
 
     @Test
+    void equal() {
+        Base58 fromBytes = new Base58(source);
+        Base58 fromString = new Base58(expected);
+
+        assertThat(fromBytes.encoded()).isEqualTo(fromString.encoded());
+        assertThat(fromBytes.decoded()).isEqualTo(fromString.decoded());
+        assertThat(fromBytes).isEqualTo(fromString);
+    }
+
+    @Test
     void empty() {
         assertThat(Base58.encode(new byte[]{})).isEqualTo("");
         assertThat(new Base58(new byte[]{}).encoded()).isEqualTo("");
