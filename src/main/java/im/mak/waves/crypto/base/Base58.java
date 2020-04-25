@@ -10,7 +10,7 @@ import java.util.Arrays;
  * Most arrays of bytes in the project are encoded by Base58 algorithm with Bitcoin alphabet to make it ease human readable.
  */
 @SuppressWarnings("WeakerAccess")
-public class Base58 {
+public abstract class Base58 {
 
     public static final char[] ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".toCharArray();
     private static final char ENCODED_ZERO = ALPHABET[0];
@@ -107,52 +107,6 @@ public class Base58 {
         }
     }
 
-    private byte[] bytes;
-    private String encoded;
-
-    /**
-     * Create Base58 from array of bytes.
-     *
-     * @param source the bytes to encode
-     */
-    public Base58(byte[] source) { //todo remove constructors, make abstract
-        this.bytes = source;
-        this.encoded = encode(this.bytes);
-    }
-
-    /**
-     * Create Base58 from base58-encoded string.
-     *
-     * @param encodedString base58-encoded string
-     * @throws IllegalArgumentException if the string is null or can't be parsed as base58 string
-     */
-    public Base58(String encodedString) throws IllegalArgumentException {
-        this.encoded = encodedString;
-        this.bytes = decode(this.encoded);
-    }
-
-    /**
-     * Get encoded string of the bytes.
-     *
-     * @return base58-encoded string
-     */
-    public String encoded() {
-        if (this.encoded == null)
-            this.encoded = encode(this.bytes);
-        return this.encoded;
-    }
-
-    /**
-     * Get original bytes.
-     *
-     * @return decoded array of bytes
-     */
-    public byte[] decoded() {
-        if (this.bytes == null)
-            this.bytes = decode(this.encoded);
-        return this.bytes;
-    }
-
     /**
      * Divides a number, represented as an array of bytes each containing a single digit
      * in the specified base, by the given divisor. The given number is modified in-place
@@ -175,25 +129,6 @@ public class Base58 {
             remainder = temp % divisor;
         }
         return (byte) remainder;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Base58 other = (Base58) o;
-        return Arrays.equals(this.decoded(), other.decoded());
-//        return this.encoded().equals(other.encoded());
-    }
-
-    @Override
-    public int hashCode() {
-        return Arrays.hashCode(bytes);
-    }
-
-    @Override
-    public String toString() {
-        return this.encoded();
     }
 
 }

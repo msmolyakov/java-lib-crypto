@@ -16,37 +16,22 @@ class TestBase58 {
     @Test
     void encode() {
         assertThat(Base58.encode(source)).isEqualTo(expected);
-        assertThat(new Base58(source).encoded()).isEqualTo(expected);
     }
 
     @Test
     void decode() {
         assertThat(Base58.decode(expected)).isEqualTo(source);
-        assertThat(new Base58(withPrefix).decoded()).isEqualTo(source);
-    }
-
-    @Test
-    void equal() {
-        Base58 fromBytes = new Base58(source);
-        Base58 fromString = new Base58(expected);
-
-        assertThat(fromBytes.encoded()).isEqualTo(fromString.encoded());
-        assertThat(fromBytes.decoded()).isEqualTo(fromString.decoded());
-        assertThat(fromBytes).isEqualTo(fromString);
     }
 
     @Test
     void empty() {
         assertThat(Base58.encode(new byte[]{})).isEqualTo("");
-        assertThat(new Base58(new byte[]{}).encoded()).isEqualTo("");
         assertThat(Base58.decode("")).isEqualTo(new byte[]{});
-        assertThat(new Base58("").decoded()).isEqualTo(new byte[]{});
     }
 
     @Test
     void decodeInvalidString() {
         assertThrows(IllegalArgumentException.class, () -> Base58.decode(expected + "0"));
-        assertThrows(IllegalArgumentException.class, () -> new Base58(expected + "0").decoded());
     }
 
 }

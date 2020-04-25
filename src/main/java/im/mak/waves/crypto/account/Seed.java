@@ -18,29 +18,6 @@ public class Seed {
     /**
      * Create instance from seed phrase.
      *
-     * @param encodedPhrase base58-encoded seed phrase for keys generation
-     * @return Seed instance
-     * @throws IllegalArgumentException if phrase is null
-     */
-    public static Seed from(Base58 encodedPhrase) throws IllegalArgumentException {
-        return new Seed(encodedPhrase);
-    }
-
-    /**
-     * Create instance from seed phrase and nonce.
-     *
-     * @param encodedPhrase base58-encoded seed phrase for keys generation
-     * @param nonce number addition to the phrase. Default is 0 (zero)
-     * @return Seed instance
-     * @throws IllegalArgumentException if phrase is null
-     */
-    public static Seed from(Base58 encodedPhrase, int nonce) throws IllegalArgumentException {
-        return new Seed(encodedPhrase, nonce);
-    }
-
-    /**
-     * Create instance from seed phrase.
-     *
      * @param phrase seed phrase for keys generation
      * @return Seed instance
      * @throws IllegalArgumentException if phrase string is null
@@ -153,27 +130,6 @@ public class Seed {
     }
 
     /**
-     * Create instance from seed phrase.
-     *
-     * @param encodedPhrase base58-encoded seed phrase for keys generation
-     * @throws IllegalArgumentException if phrase is null
-     */
-    public Seed(Base58 encodedPhrase) throws IllegalArgumentException {
-        this(encodedPhrase, 0);
-    }
-
-    /**
-     * Create instance from seed phrase and nonce.
-     *
-     * @param encodedPhrase base58-encoded seed phrase for keys generation
-     * @param nonce number addition to the phrase. Default is 0 (zero)
-     * @throws IllegalArgumentException if phrase is null
-     */
-    public Seed(Base58 encodedPhrase, int nonce) throws IllegalArgumentException {
-        this(encodedPhrase.decoded(), nonce);
-    }
-
-    /**
      * Create instance from bytes of seed phrase.
      *
      * @param phraseBytes bytes of seed phrase for keys generation
@@ -234,8 +190,8 @@ public class Seed {
      *
      * @return the base58-encoded seed phrase
      */
-    public Base58 base58() {
-        return new Base58(this.bytes);
+    public String base58() {
+        return Base58.encode(this.bytes);
     }
 
     /**

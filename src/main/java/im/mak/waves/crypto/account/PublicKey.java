@@ -29,17 +29,6 @@ public class PublicKey {
     /**
      * Create public key instance from its base58 representation.
      *
-     * @param encodedPublicKey public key bytes as base58
-     * @return public key instance
-     * @throws IllegalArgumentException if base58 arg is null
-     */
-    public static PublicKey as(Base58 encodedPublicKey) throws IllegalArgumentException {
-        return new PublicKey(encodedPublicKey);
-    }
-
-    /**
-     * Create public key instance from its base58 representation.
-     *
      * @param base58Encoded public key bytes as base58-encoded string
      * @return public key instance
      * @throws IllegalArgumentException if base58 string is null
@@ -77,16 +66,6 @@ public class PublicKey {
     /**
      * Create public key instance from its base58 representation.
      *
-     * @param encodedPublicKey public key bytes as base58
-     * @throws IllegalArgumentException if base58 arg is null
-     */
-    public PublicKey(Base58 encodedPublicKey) throws IllegalArgumentException {
-        this(encodedPublicKey.decoded());
-    }
-
-    /**
-     * Create public key instance from its base58 representation.
-     *
      * @param base58Encoded public key bytes as base58-encoded string
      * @throws IllegalArgumentException if base58 string is null
      */
@@ -113,15 +92,6 @@ public class PublicKey {
      */
     public byte[] bytes() {
         return this.bytes.clone();
-    }
-
-    /**
-     * Get the public key encoded to base58.
-     *
-     * @return the base58-encoded public key
-     */
-    public Base58 base58() {
-        return new Base58(this.bytes);
     }
 
     /**
@@ -168,6 +138,11 @@ public class PublicKey {
         return Arrays.hashCode(bytes);
     }
 
+    /**
+     * Get the public key encoded to base58.
+     *
+     * @return the base58-encoded public key
+     */
     @Override
     public String toString() {
         if (this.encoded == null) this.encoded = Base58.encode(bytes);

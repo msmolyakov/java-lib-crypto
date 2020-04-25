@@ -48,17 +48,6 @@ public class Address {
     /**
      * Create address instance from its base58 representation.
      *
-     * @param encodedAddress address bytes as base58
-     * @return address instance
-     * @throws IllegalArgumentException if the base58 arg is null
-     */
-    public static Address as(Base58 encodedAddress) throws IllegalArgumentException {
-        return new Address(encodedAddress);
-    }
-
-    /**
-     * Create address instance from its base58 representation.
-     *
      * @param base58Encoded address bytes as base58-encoded string
      * @return address instance
      * @throws IllegalArgumentException if base58 string is null
@@ -81,22 +70,22 @@ public class Address {
     /**
      * Check if the address is correct for specified Waves network.
      *
-     * @param encodedAddress address as base58-encoded string
+     * @param address address as base58-encoded string
      * @param chainId blockchain network Id
      * @return true if the address is correct
      */
-    public static boolean isValid(Base58 encodedAddress, byte chainId) {
-        return isValid(encodedAddress.decoded(), chainId);
+    public static boolean isValid(String address, byte chainId) {
+        return isValid(address, chainId);
     }
 
     /**
      * Check if the address is correct for any Waves network.
      *
-     * @param encodedAddress address as base58-encoded string
+     * @param address address as base58-encoded string
      * @return true if the address is correct
      */
-    public static boolean isValid(Base58 encodedAddress) {
-        return isValid(encodedAddress.decoded());
+    public static boolean isValid(String address) {
+        return isValid(address);
     }
 
     /**
@@ -158,17 +147,6 @@ public class Address {
 
         this.bytes = buf.array();
         this.encoded = Base58.encode(this.bytes);
-    }
-
-    /**
-     * Create address instance from its base58 representation.
-     *
-     * @param encodedAddress address bytes as base58
-     * @throws IllegalArgumentException if the base58 arg is null
-     */
-    @Deprecated
-    public Address(Base58 encodedAddress) throws IllegalArgumentException {
-        this(encodedAddress.decoded());
     }
 
     /**
@@ -243,15 +221,6 @@ public class Address {
         return this.bytes;
     }
 
-    /**
-     * Get the address encoded to base58.
-     *
-     * @return the base58-encoded address
-     */
-    public Base58 base58() {
-        return new Base58(this.bytes);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -265,6 +234,11 @@ public class Address {
         return Arrays.hashCode(bytes);
     }
 
+    /**
+     * Get the address encoded to base58.
+     *
+     * @return the base58-encoded address
+     */
     @Override
     public String toString() {
         if (this.encoded == null) this.encoded = Base58.encode(bytes);
