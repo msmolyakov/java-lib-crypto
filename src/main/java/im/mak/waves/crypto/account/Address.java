@@ -14,6 +14,13 @@ import java.util.Arrays;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Address {
 
+    private static final String PREFIX = "address:";
+    private static final byte TYPE = 1;
+    private static final int CHECKSUM_LENGTH = 4;
+    private static final int HASH_LENGTH = 20;
+    private static final int ADDRESS_LENGTH = 1 + 1 + HASH_LENGTH + CHECKSUM_LENGTH;
+    private static final int ENCODED_LENGTH = (int) Math.ceil(Math.log(256) / Math.log(58) * ADDRESS_LENGTH);
+
     /**
      * Generate an address from the public key.
      * Depends on the Id of a particular blockchain network.
@@ -24,6 +31,18 @@ public class Address {
      */
     public static Address from(PublicKey publicKey, byte chainId) {
         return new Address(publicKey, chainId);
+    }
+
+    /**
+     * Generate an address from the public key.
+     * Depends on the Id of a particular blockchain network.
+     *
+     * @param chainId blockchain network Id.
+     * @return address
+     * @see ChainId
+     */
+    public static Address fromPart(byte[] publicKeyHash, byte chainId) {
+        return new Address(publicKeyHash, chainId);
     }
 
     /**
@@ -66,8 +85,8 @@ public class Address {
      * @param chainId blockchain network Id
      * @return true if the address is correct
      */
-    public static boolean isCorrect(Base58 encodedAddress, byte chainId) {
-        return isCorrect(encodedAddress.decoded(), chainId);
+    public static boolean isValid(Base58 encodedAddress, byte chainId) {
+        return isValid(encodedAddress.decoded(), chainId);
     }
 
     /**
@@ -76,8 +95,8 @@ public class Address {
      * @param encodedAddress address as base58-encoded string
      * @return true if the address is correct
      */
-    public static boolean isCorrect(Base58 encodedAddress) {
-        return isCorrect(encodedAddress.decoded());
+    public static boolean isValid(Base58 encodedAddress) {
+        return isValid(encodedAddress.decoded());
     }
 
     /**
@@ -87,8 +106,8 @@ public class Address {
      * @param chainId blockchain network Id
      * @return true if the address is correct
      */
-    public static boolean isCorrect(byte[] addressBytes, byte chainId) {
-        return isCorrect(addressBytes) && addressBytes[1] == chainId;
+    public static boolean isValid(byte[] addressBytes, byte chainId) {
+        return isValid(addressBytes) && addressBytes[1] == chainId;
     }
 
     /**
@@ -97,7 +116,7 @@ public class Address {
      * @param addressBytes address bytes
      * @return true if the address is correct
      */
-    public static boolean isCorrect(byte[] addressBytes) {
+    public static boolean isValid(byte[] addressBytes) {
         try {
             new Address(addressBytes);
         } catch (IllegalArgumentException e) {
@@ -117,9 +136,23 @@ public class Address {
      * @see ChainId
      */
     public Address(PublicKey publicKey, byte chainId) {
+        this(partOfPublicKey(publicKey), chainId);
+    }
+
+    private static byte[] partOfPublicKey(PublicKey publicKey) {
+        return Arrays.copyOfRange(Hash.secureHash(publicKey.bytes()), 0, 20);
+    }
+
+    /**
+     * Generate an address from a part of the public key.
+     * Depends on the Id of a particular blockchain network.
+     *
+     * @param chainId blockchain network Id.
+     * @see ChainId
+     */
+    public Address(byte[] publicKeyHash, byte chainId) {
         ByteBuffer buf = ByteBuffer.allocate(26);
-        byte[] hash = Hash.secureHash(publicKey.bytes());
-        buf.put((byte) 1).put(chainId).put(hash, 0, 20);
+        buf.put((byte) 1).put(chainId).put(publicKeyHash);
         byte[] checksum = Hash.secureHash(Arrays.copyOfRange(buf.array(), 0 , 22));
         buf.put(checksum, 0, 4);
 
@@ -133,6 +166,7 @@ public class Address {
      * @param encodedAddress address bytes as base58
      * @throws IllegalArgumentException if the base58 arg is null
      */
+    @Deprecated
     public Address(Base58 encodedAddress) throws IllegalArgumentException {
         this(encodedAddress.decoded());
     }
