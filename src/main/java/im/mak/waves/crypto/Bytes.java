@@ -50,6 +50,18 @@ public abstract class Bytes {
     }
 
     /**
+     * Converts short number to 2-byte array.
+     *
+     * @param number short number
+     * @return 2-byte array
+     */
+    public static byte[] fromShort(short number) {
+        ByteBuffer buffer = ByteBuffer.allocate(Short.BYTES);
+        buffer.putShort(number);
+        return buffer.array();
+    }
+
+    /**
      * Converts integer number to 4-byte array.
      *
      * @param number integer number
@@ -74,13 +86,42 @@ public abstract class Bytes {
     }
 
     /**
-     * Converts byte array to string with UTF-8 encoding.
+     * Converts 2-byte array to short number.
      *
-     * @param bytes byte array
-     * @return string with UTF-8 encoding
+     * @param bytes 2-byte array
+     * @return short number
      */
-    public static String toUtf8(byte[] bytes) {
-        return new String(bytes, StandardCharsets.UTF_8);
+    public static short toShort(byte[] bytes) {
+        ByteBuffer buffer = ByteBuffer.allocate(Short.BYTES);
+        buffer.put(bytes);
+        buffer.flip();
+        return buffer.getShort();
+    }
+
+    /**
+     * Converts 4-byte array to integer number.
+     *
+     * @param bytes 4-byte array
+     * @return integer number
+     */
+    public static int toInt(byte[] bytes) {
+        ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+        buffer.put(bytes);
+        buffer.flip();
+        return buffer.getInt();
+    }
+
+    /**
+     * Converts 8-byte array to long number.
+     *
+     * @param bytes 8-byte array
+     * @return long number
+     */
+    public static long toLong(byte[] bytes) {
+        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+        buffer.put(bytes);
+        buffer.flip();
+        return buffer.getLong();
     }
 
     /**
@@ -93,6 +134,16 @@ public abstract class Bytes {
     public static byte[] fromUtf8(String string) throws IllegalArgumentException {
         if (string == null) throw new IllegalArgumentException("String can't be null");
         return string.getBytes(StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Converts byte array to string with UTF-8 encoding.
+     *
+     * @param bytes byte array
+     * @return string with UTF-8 encoding
+     */
+    public static String toUtf8(byte[] bytes) {
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
     /**
@@ -115,7 +166,7 @@ public abstract class Bytes {
      * Splits byte array into multiple arrays of desired sizes.
      * If array length is greater than sum of desired chunks, it will return rest of the array as last additional chunk.
      *
-     * @param source byte array
+     * @param source     byte array
      * @param chunkSizes desired sizes of resulting byte arrays
      * @return parts of source array
      * @throws IllegalArgumentException if any chunk size is negative or source array is less than sum of desired chunks
@@ -138,6 +189,67 @@ public abstract class Bytes {
                 mark += chunkSizes[i];
             } else result[i] = Arrays.copyOfRange(source, mark, source.length);
         return result;
+    }
+
+    public static byte[] drop(byte[] source, int count) {
+        return Arrays.copyOfRange(source, count, source.length);
+    }
+
+    public static byte[] take(byte[] source, int count) {
+        return Arrays.copyOfRange(source, 0, count);
+    }
+
+    public static ByteReader reader(byte[] bytes) {
+        return new ByteReader(bytes);
+    }
+
+    public static class ByteReader {
+        private final byte[] bytes;
+        private final int length;
+        private int index;
+
+        public ByteReader(byte[] bytes) {
+            this.bytes = bytes;
+            this.length = this.bytes.length;
+            this.index = 0;
+        }
+
+        public boolean hasNext() {
+            return index < length;
+        }
+
+        public boolean skip(int count) {
+            index += count;
+            return hasNext();
+        }
+
+        public int rest() {
+            return bytes.length - index;
+        }
+
+        public byte read() {
+            return bytes[index++];
+        }
+
+        public byte[] read(int count) {
+            byte[] result = Arrays.copyOfRange(bytes, index, index + count);
+            index = index + count;
+            return result;
+        }
+
+        public long readLong() {
+            return Bytes.toLong(read(8));
+        }
+
+        public short readShort() {
+            return Bytes.toShort(read(2));
+        }
+
+        public byte[] readArray() {
+            short arrayLength = readShort();
+            return read(arrayLength);
+        }
+
     }
 
 }
