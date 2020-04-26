@@ -46,7 +46,7 @@ public abstract class Bytes {
      * @return true if all the input arrays are equal
      */
     public static boolean equal(byte[]... compared) {
-        return compared.length < 2 || Arrays.stream(compared).allMatch(a -> Arrays.equals(a, compared[0]));
+        return compared.length < 2 || Arrays.stream(compared).allMatch(a -> a != null && Arrays.equals(a, compared[0]));
     }
 
     /**

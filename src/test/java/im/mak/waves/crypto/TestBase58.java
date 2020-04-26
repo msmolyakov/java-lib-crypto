@@ -21,6 +21,7 @@ class TestBase58 {
     @Test
     void decode() {
         assertThat(Base58.decode(expected)).isEqualTo(source);
+        assertThat(Base58.encode(Base58.decode(withPrefix))).isEqualTo(expected);
     }
 
     @Test
