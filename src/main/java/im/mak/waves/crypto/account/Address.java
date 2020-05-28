@@ -75,7 +75,11 @@ public class Address {
      * @return true if the address is correct
      */
     public static boolean isValid(String address, byte chainId) {
-        return isValid(address, chainId);
+        try {
+            return isValid(Base58.decode(address), chainId);
+        } catch (IllegalArgumentException iae) {
+            return false;
+        }
     }
 
     /**
@@ -85,7 +89,11 @@ public class Address {
      * @return true if the address is correct
      */
     public static boolean isValid(String address) {
-        return isValid(address);
+        try {
+            return isValid(Base58.decode(address));
+        } catch (IllegalArgumentException iae) {
+            return false;
+        }
     }
 
     /**

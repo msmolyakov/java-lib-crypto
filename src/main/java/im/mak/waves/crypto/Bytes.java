@@ -1,5 +1,6 @@
 package im.mak.waves.crypto;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -50,6 +51,16 @@ public abstract class Bytes {
     }
 
     /**
+     * Converts boolean to byte.
+     *
+     * @param bool boolean value
+     * @return 1 if true, 0 if false
+     */
+    public static byte fromBoolean(boolean bool) {
+        return (byte)(bool ? 1 : 0);
+    }
+
+    /**
      * Converts short number to 2-byte array.
      *
      * @param number short number
@@ -83,6 +94,21 @@ public abstract class Bytes {
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
         buffer.putLong(number);
         return buffer.array();
+    }
+
+    /**
+     * Converts byte to boolean.
+     *
+     * @param byt byte
+     * @return true if 1, false if 0
+     * @throws IllegalArgumentException if byte is not 1 ot 0
+     */
+    public static boolean toBoolean(byte byt) {
+        if (byt == 1)
+            return true;
+        else if (byt == 0)
+            return false;
+        else throw new IllegalArgumentException("Can't convert byte " + byt + " to boolean. Must be 1 or 0");
     }
 
     /**
@@ -122,6 +148,10 @@ public abstract class Bytes {
         buffer.put(bytes);
         buffer.flip();
         return buffer.getLong();
+    }
+
+    public static byte[] toSizedByteArray(byte[] bytes) {
+        return Bytes.concat(fromShort((short)bytes.length), bytes);
     }
 
     /**
@@ -237,12 +267,25 @@ public abstract class Bytes {
             return result;
         }
 
-        public long readLong() {
-            return Bytes.toLong(read(8));
+        public boolean readBoolean() throws IOException {
+            byte byt = read();
+            if (byt == 0)
+                return false;
+            else if (byt == 1)
+                return true;
+            else throw new IOException("Can't read byte " + byt + " as boolean. Expected 1 or 0");
         }
 
         public short readShort() {
             return Bytes.toShort(read(2));
+        }
+
+        public int readInt() {
+            return Bytes.toInt(read(4));
+        }
+
+        public long readLong() {
+            return Bytes.toLong(read(8));
         }
 
         public byte[] readArray() {

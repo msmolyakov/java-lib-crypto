@@ -23,6 +23,15 @@ public abstract class Base58 {
         }
     }
 
+    public static boolean isValid(String encoded) {
+        try {
+            decode(encoded);
+        } catch (IllegalArgumentException iae) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Encodes the given bytes as a base58 string (no checksum is appended).
      *

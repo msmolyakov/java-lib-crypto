@@ -13,8 +13,8 @@ import java.util.Arrays;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class PublicKey {
 
-    public static final int LENGTH = 32;
-    public static final int SIGNATURE_LENGTH = 64;
+    public static final int BYTES_LENGTH = 32;
+    public static final int SIGNATURE_LENGTH = 64; //todo move to Proof
 
     /**
      * Generate public key from the private key.
@@ -59,7 +59,7 @@ public class PublicKey {
      * @param privateKey public key
      */
     public PublicKey(PrivateKey privateKey) {
-        this.bytes = new byte[LENGTH];
+        this.bytes = new byte[BYTES_LENGTH];
         curve_sigs.curve25519_keygen(this.bytes, privateKey.bytes());
     }
 
@@ -80,8 +80,8 @@ public class PublicKey {
      * @throws IllegalArgumentException if the length of the byte array is different than expected
      */
     public PublicKey(byte[] publicKeyBytes) throws IllegalArgumentException {
-        if (publicKeyBytes.length != LENGTH) throw new IllegalArgumentException("Public key has wrong size in bytes. "
-                + "Expected: " + LENGTH + ", actual: " + publicKeyBytes.length);
+        if (publicKeyBytes.length != BYTES_LENGTH) throw new IllegalArgumentException("Public key has wrong size in bytes. "
+                + "Expected: " + BYTES_LENGTH + ", actual: " + publicKeyBytes.length);
         this.bytes = publicKeyBytes.clone();
     }
 
