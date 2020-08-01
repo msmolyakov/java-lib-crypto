@@ -1,6 +1,5 @@
 package im.mak.waves.crypto;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -227,72 +226,6 @@ public abstract class Bytes {
 
     public static byte[] take(byte[] source, int count) {
         return Arrays.copyOfRange(source, 0, count);
-    }
-
-    public static ByteReader reader(byte[] bytes) {
-        return new ByteReader(bytes);
-    }
-
-    public static class ByteReader {
-        private final byte[] bytes;
-        private final int length;
-        private int index;
-
-        public ByteReader(byte[] bytes) {
-            this.bytes = bytes;
-            this.length = this.bytes.length;
-            this.index = 0;
-        }
-
-        public boolean hasNext() {
-            return index < length;
-        }
-
-        public boolean skip(int count) {
-            index += count;
-            return hasNext();
-        }
-
-        public int rest() {
-            return bytes.length - index;
-        }
-
-        public byte read() {
-            return bytes[index++];
-        }
-
-        public byte[] read(int count) {
-            byte[] result = Arrays.copyOfRange(bytes, index, index + count);
-            index = index + count;
-            return result;
-        }
-
-        public boolean readBoolean() throws IOException {
-            byte byt = read();
-            if (byt == 0)
-                return false;
-            else if (byt == 1)
-                return true;
-            else throw new IOException("Can't read byte " + byt + " as boolean. Expected 1 or 0");
-        }
-
-        public short readShort() {
-            return Bytes.toShort(read(2));
-        }
-
-        public int readInt() {
-            return Bytes.toInt(read(4));
-        }
-
-        public long readLong() {
-            return Bytes.toLong(read(8));
-        }
-
-        public byte[] readArray() {
-            short arrayLength = readShort();
-            return read(arrayLength);
-        }
-
     }
 
 }
