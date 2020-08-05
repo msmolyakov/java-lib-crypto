@@ -44,14 +44,21 @@ public class Crypto {
         return bytes;
     }
 
-    public static byte[] getAddress(byte[] publicKey, byte chainId) {
-        byte[] publicKeyHash = Arrays.copyOfRange(Hash.secureHash(publicKey), 0, 20);
+    public static byte[] getPublicKeyHash(byte[] publicKey) {
+        return Arrays.copyOfRange(Hash.secureHash(publicKey), 0, 20);
+    }
 
+    public static byte[] getAddressChecksum(byte chainId, byte[] publicKeyHash) {
+        byte[] hash = Hash.secureHash(Bytes.concat(Bytes.of((byte) 1, chainId), publicKeyHash));
+        return Bytes.take(hash, 4);
+    }
+
+    public static byte[] getAddress(byte chainId, byte[] publicKeyHash) {
         ByteBuffer buf = ByteBuffer.allocate(26);
-        buf.put((byte) 1).put(chainId).put(publicKeyHash);
-        byte[] checksum = Hash.secureHash(Arrays.copyOfRange(buf.array(), 0, 22));
-        buf.put(checksum, 0, 4);
-
+        buf.put((byte) 1)
+                .put(chainId)
+                .put(publicKeyHash)
+                .put(getAddressChecksum(chainId, publicKeyHash));
         return buf.array();
     }
 

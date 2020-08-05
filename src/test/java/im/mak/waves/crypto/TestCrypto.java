@@ -22,7 +22,8 @@ class TestCrypto {
         byte[] accountSeed = Crypto.getAccountSeed(seedPhrase);
         byte[] privateKey = Crypto.getPrivateKey(accountSeed);
         byte[] publicKey = Crypto.getPublicKey(privateKey);
-        byte[] address = Crypto.getAddress(publicKey, chainId);
+        byte[] publicKeyHash = Crypto.getPublicKeyHash(publicKey);
+        byte[] address = Crypto.getAddress(chainId, publicKeyHash);
 
         assertThat(accountSeed).isEqualTo(expectedAccountSeed);
         assertThat(Crypto.getAccountSeed(seedPhrase, Integer.MIN_VALUE))
